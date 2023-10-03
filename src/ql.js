@@ -1,4 +1,5 @@
-const ql = `query ($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
+const ql = `
+query ($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
     repository(owner: $owner, name: $repo) {
         pullRequest(number: $pr) {
             commits(first: 100, after: $endCursor) {

@@ -1,6 +1,6 @@
 const core = require('@actions/core')
 const { getExecOutput } = require('@actions/exec')
-const { ql } = require('./whatChangesGraphQL')
+const { ql } = require('./ql')
 
 /**
  * The main function for the action.

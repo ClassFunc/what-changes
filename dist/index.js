@@ -3958,6 +3958,7 @@ exports["default"] = _default;
 
 const core = __nccwpck_require__(186)
 const { getExecOutput } = __nccwpck_require__(514)
+            const { ql } = __nccwpck_require__(701)
 
 /**
  * The main function for the action.
@@ -3996,7 +3997,7 @@ async function run() {
 const bashScript = ({ owner, repo, pr, outType }) => {
   return `
 echo "github api query commits of current pr"
-gh api graphql -F query='@whatchanges.graphql' \\
+gh api graphql -F query='${ql}' \\
 -F owner='${owner}' \\
 -F repo='${repo}' \\
 -F pr=${pr} \\
@@ -4018,6 +4019,52 @@ curl -H "Accept-Charset: UTF-8" \\
 
 module.exports = {
   run
+}
+
+
+            /***/
+        }),
+
+        /***/ 701:
+        /***/ ((module) => {
+
+            const ql = `
+query ($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
+    repository(owner: $owner, name: $repo) {
+        pullRequest(number: $pr) {
+            commits(first: 100, after: $endCursor) {
+                totalCount
+                pageInfo {
+                    startCursor
+                    endCursor
+                    hasNextPage
+                    hasPreviousPage
+                }
+                nodes {
+                    commit {
+                        authoredDate
+                        authors(last: 2) {
+                            nodes {
+                                name
+                                user {
+                                    login
+                                }
+                            }
+                        }
+                        committedDate
+                        messageBody
+                        messageHeadline
+                        oid
+                    }
+                }
+            }
+        }
+    }
+}
+`
+
+            module.exports = {
+                ql
 }
 
 
