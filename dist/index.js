@@ -3994,8 +3994,8 @@ async function run() {
   }
 }
 
-            const query = `
-query ($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
+            const query =
+              `query ($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
     repository(owner: $owner, name: $repo) {
         pullRequest(number: $pr) {
             commits(first: 100, after: $endCursor) {
@@ -4026,11 +4026,12 @@ query ($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
             }
         }
     }
-}
-`
+}`.replace(/\s+/g, ' ') // replace all multi spaces with single space
+
 const bashScript = ({ owner, repo, pr, outType }) => {
   return `
-echo "github api query commits of current pr"
+echo "current dir: $PWD"
+echo "gh api query commits of current pr"
 gh api graphql \\
 -f query='${query}' \\
 -F owner='${owner}' \\
@@ -4048,7 +4049,6 @@ curl -H "Accept-Charset: UTF-8" \\
 --location 'https://go-mentoroid-api.geniam.com/gh/commits2md' \\
 --header 'Content-Type: application/json' \\
 --data '@commits.json' | jq .${outType} -r
-
 `
 }
 
