@@ -3981,8 +3981,8 @@ async function run() {
       return
     }
 
-      console.log(`--> extracting pr changes for ${owner}/${repo}#${pr}`)
-      console.log(`--> output type: ${outType}`)
+      core.info(`--> extracting pr changes for ${owner}/${repo}#${pr}`)
+      core.info(`--> output type: ${outType}`)
 
       const execOutput = await getExecOutput(
         'dist/bash.sh',
@@ -3991,10 +3991,15 @@ async function run() {
             silent: true
         }
       )
-      console.log('---> output:', execOutput.stdout)
-      console.log('---> err:', execOutput.stderr)
-    //   set output
-    core.setOutput('value', execOutput.stdout)
+      if (execOutput.stdout !== '' && execOutput.stderr !== '') {
+          core.info('---> output ↓↓↓↓↓')
+          core.info(execOutput.stdout)
+          core.setOutput('value', execOutput.stdout)
+          core.info('set `outputs.value` ↑↑↑↑↑')
+      }
+      if (execOutput.stderr) {
+          core.error('---> err:\n', execOutput.stderr)
+      }
   } catch (err) {
     core.setFailed(err.message)
   }
