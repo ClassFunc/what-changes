@@ -27,6 +27,9 @@ async function run() {
     console.log(`output type: ${outType}`)
     const bash = bashScript({ owner, repo, pr, outType })
     console.log('bash script: ', bash)
+    const whichGH = await getExecOutput('which', ['gh'])
+    console.log('gh cmd in path: ', whichGH.stdout)
+
     const execOutput = await getExecOutput(bash)
     console.log(execOutput.stdout)
     //   set output
@@ -72,7 +75,6 @@ const query =
 
 const bashScript = ({ owner, repo, pr, outType }) => {
   return `
-echo "gh cmd in path: $(which gh)"
 gh api graphql \
 -f query='${query}' \
 -F owner='${owner}' \
