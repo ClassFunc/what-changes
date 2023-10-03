@@ -39,7 +39,8 @@ async function run() {
 const bashScript = ({ owner, repo, pr, outType }) => {
   return `
 echo "github api query commits of current pr"
-gh api graphql -F query='${ql}' \\
+gh api graphql \\
+-f query='${ql}' \\
 -F owner='${owner}' \\
 -F repo='${repo}' \\
 -F pr=${pr} \\
