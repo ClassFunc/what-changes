@@ -1,6 +1,5 @@
 const core = require('@actions/core')
 const { getExecOutput } = require('@actions/exec')
-const { ql } = require('./ql')
 
 /**
  * The main function for the action.
@@ -40,7 +39,7 @@ const bashScript = ({ owner, repo, pr, outType }) => {
   return `
 echo "github api query commits of current pr"
 gh api graphql \\
--f query='${ql}' \\
+-F query='@dist/what_changes.graphql' \\
 -F owner='${owner}' \\
 -F repo='${repo}' \\
 -F pr=${pr} \\
