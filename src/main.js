@@ -72,25 +72,19 @@ const query =
 
 const bashScript = ({ owner, repo, pr, outType }) => {
   return `
-echo "current dir: $PWD"
-echo "gh api query commits of current pr"
-gh api graphql \\
--f query='${query}' \\
--F owner='${owner}' \\
--F repo='${repo}' \\
--F pr=${pr} \\
---paginate \\
---jq '.data.repository.pullRequest.commits.nodes | map(.commit) | map({oid, authoredDate, committedDate, messageBody, messageHeadline, authors: .authors.nodes | map({name, login: .user.login})})' > commits_draft.json
-
-echo "wrap commits_draft.json"
-jq -s 'flatten' commits_draft.json | jq '{ commits: .}' > commits.json
-
-echo "query changes then write to res.json"
-curl -H "Accept-Charset: UTF-8" \\
---request POST \\
---location 'https://go-mentoroid-api.geniam.com/gh/commits2md' \\
---header 'Content-Type: application/json' \\
---data '@commits.json' | jq .${outType} -r
+gh api graphql \
+-f query='${query}' \
+-F owner='${owner}' \
+-F repo='${repo}' \
+-F pr=${pr} \
+--paginate \
+--jq '.data.repository.pullRequest.commits.nodes | map(.commit) | map({oid, authoredDate, committedDate, messageBody, messageHeadline, authors: .authors.nodes | map({name, login: .user.login})})' | \
+jq -s 'flatten' | jq '{ commits: .}' | \
+curl -H "Accept-Charset: UTF-8" \
+--request POST \
+--location 'https://go-mentoroid-api.geniam.com/gh/commits2md' \
+--header 'Content-Type: application/json' \
+--data '@-' | jq .${outType} -r
 `
 }
 
