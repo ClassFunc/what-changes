@@ -3991,14 +3991,15 @@ async function run() {
             silent: true
         }
       )
-      if (execOutput.stdout !== '' && execOutput.stderr !== '') {
+      if (execOutput.stdout && !execOutput.stderr) {
           core.info('---> output ↓↓↓↓↓')
           core.info(execOutput.stdout)
           core.setOutput('value', execOutput.stdout)
-          core.info('set `outputs.value` ↑↑↑↑↑')
+          core.info('---> set `outputs.value` ↑↑↑↑↑')
       }
       if (execOutput.stderr) {
-          core.error('---> err:\n', execOutput.stderr)
+          core.error('---> error: ↓↓↓↓↓')
+          core.error(execOutput.stderr)
       }
   } catch (err) {
     core.setFailed(err.message)
