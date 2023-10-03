@@ -53,7 +53,7 @@ jobs:
         id: test-action
         uses: ./
         with:
-          output-type: html
+          output-type: 'md'
 
       - name: Print Output
         id: output
