@@ -3989,13 +3989,10 @@ async function run() {
 
       const bash = bashScript({ owner, repo, pr, outType })
       console.log('-->bash script: ', bash)
-      const execOutput = await getExecOutput(
-        whichGH.stdout,
-        ['api', 'graphql', bash],
-        {
-            silent: true
-        }
-      )
+      const execOutput = await getExecOutput(whichGH.stdout, ['api', 'graphql'], {
+          input: /*to buffer bash script*/ Buffer.from(bash),
+          silent: true
+      })
       console.log('--->output:', execOutput.stdout)
       console.log('--->err:', execOutput.stderr)
     //   set output
