@@ -1,5 +1,6 @@
 const core = require('@actions/core')
 const { getExecOutput } = require('@actions/exec')
+const { ql } = require('./whatChangesGraphQL')
 
 /**
  * The main function for the action.
@@ -38,7 +39,7 @@ async function run() {
 const bashScript = ({ owner, repo, pr, outType }) => {
   return `
 echo "github api query commits of current pr"
-gh api graphql -F query='@whatchanges.graphql' \\
+gh api graphql -F query='${ql}' \\
 -F owner='${owner}' \\
 -F repo='${repo}' \\
 -F pr=${pr} \\
