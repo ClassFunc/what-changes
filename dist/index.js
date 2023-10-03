@@ -3987,12 +3987,15 @@ async function run() {
       const whichGH = await getExecOutput('which', ['gh'])
       console.log('-->gh cmd in path: ', whichGH.stdout)
 
-      const bash = bashScript({ owner, repo, pr, outType })
-      console.log('-->bash script: ', bash)
-      const execOutput = await getExecOutput(whichGH.stdout, ['api', 'graphql'], {
-          input: /*to buffer bash script*/ Buffer.from(bash),
-          silent: true
-      })
+      // const bash = bashScript({ owner, repo, pr, outType })
+      // console.log('-->bash script: ', bash)
+      const execOutput = await getExecOutput(
+        './bash.sh',
+        ['-q', query, '-o', owner, '-r', repo, '-p', pr, '-t', outType],
+        {
+            silent: true
+        }
+      )
       console.log('--->output:', execOutput.stdout)
       console.log('--->err:', execOutput.stderr)
     //   set output
@@ -4036,22 +4039,23 @@ async function run() {
     }
 }`.replace(/\s+/g, ' ') // replace all multi spaces with single space
 
-const bashScript = ({ owner, repo, pr, outType }) => {
-    return `-f query='${query}' \
--F owner='${owner}' \
--F repo='${repo}' \
--F pr=${pr} \
---paginate \
---jq '.data.repository.pullRequest.commits.nodes | map(.commit) | map({oid, authoredDate, committedDate, messageBody, messageHeadline, authors: .authors.nodes | map({name, login: .user.login})})' | \
-jq -s 'flatten' | jq '{ commits: .}' | \
-curl -H "Accept-Charset: UTF-8" \
---silent \
---request POST \
---location 'https://go-mentoroid-api.geniam.com/gh/commits2md' \
---header 'Content-Type: application/json' \
---data '@-' | jq .${outType} -r
-`
-}
+// const bashScript = ({ owner, repo, pr, outType }) => {
+//   return `/usr/bin/gh api graphql \
+// -f query='${query}' \
+// -F owner='${owner}' \
+// -F repo='${repo}' \
+// -F pr=${pr} \
+// --paginate \
+// --jq '.data.repository.pullRequest.commits.nodes | map(.commit) | map({oid, authoredDate, committedDate, messageBody, messageHeadline, authors: .authors.nodes | map({name, login: .user.login})})' | \
+// jq -s 'flatten' | jq '{ commits: .}' | \
+// curl -H "Accept-Charset: UTF-8" \
+// --silent \
+// --request POST \
+// --location 'https://go-mentoroid-api.geniam.com/gh/commits2md' \
+// --header 'Content-Type: application/json' \
+// --data '@-' | jq .${outType} -r
+// `
+// }
 
 module.exports = {
   run
