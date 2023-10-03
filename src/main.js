@@ -32,7 +32,7 @@ async function run() {
     // const bash = bashScript({ owner, repo, pr, outType })
     // console.log('-->bash script: ', bash)
     const execOutput = await getExecOutput(
-      './bash.sh',
+      'dist/bash.sh',
       ['-q', query, '-o', owner, '-r', repo, '-p', pr, '-t', outType],
       {
         silent: true
