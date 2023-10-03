@@ -75,8 +75,7 @@ const query =
 }`.replace(/\s+/g, ' ') // replace all multi spaces with single space
 
 const bashScript = ({ owner, repo, pr, outType }) => {
-  return `
-api graphql \
+  return `api graphql \
 -f query='${query}' \
 -F owner='${owner}' \
 -F repo='${repo}' \
