@@ -3990,9 +3990,10 @@ async function run() {
       const bash = bashScript({ owner, repo, pr, outType })
       console.log('-->bash script: ', bash)
       const execOutput = await getExecOutput(whichGH.stdout, ['api', 'graphql'], {
-          input: bash
+          input: bash,
+          silent: true
       })
-    console.log(execOutput.stdout)
+      // console.log(execOutput.stdout)
     //   set output
     core.setOutput('value', execOutput.stdout)
   } catch (err) {
