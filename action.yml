@@ -1,18 +1,30 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'what-changes'
+description: 'Report what changes within branches'
+author: 'classfunc'
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
-    required: true
-    default: '1000'
+  owner:
+    description: "repo's owner"
+    required: false
+    default: '${{ github.event.repository.owner.login }}'
+  repo:
+    description: "repo name"
+    required: false
+    default: '${{ github.event.repository.name }}'
+  pr:
+    description: "pull request number"
+    required: false
+    default: '${{ github.event.number }}'
+  output-type:
+    description: "output type"
+    required: false
+    default: 'html'
 
 # Define your outputs here.
 outputs:
-  time:
-    description: 'Your output description here'
+  value:
+    description: 'value of var `output-type` field'
 
 runs:
   using: node20
