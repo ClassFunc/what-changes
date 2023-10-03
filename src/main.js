@@ -1,28 +1,61 @@
 const core = require('@actions/core')
-const { wait } = require('./wait')
+const { getExecOutput } = require('@actions/exec')
 
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
  */
+
+const ValidOutputTypes = ['md', 'html', 'rows']
+
 async function run() {
   try {
-    const ms = core.getInput('milliseconds', { required: true })
+    const owner = core.getInput('owner')
+    const repo = core.getInput('repo')
+    const pr = core.getInput('pr')
+    const outType = core.getInput('output-type')
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    // check outType
+    if (!ValidOutputTypes.includes(outType)) {
+      core.setFailed(
+        `output-type ${outType} is not valid, must be one of ${ValidOutputTypes}`
+      )
+      return
+    }
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
-  } catch (error) {
-    // Fail the workflow run if an error occurs
-    core.setFailed(error.message)
+    console.log(`extracting pr changes for ${owner}/${repo}#${pr}`)
+    console.log(`output type: ${outType}`)
+    const bash = bashScript({ owner, repo, pr, outType })
+    const execOutput = await getExecOutput(bash)
+    console.log(execOutput.stdout)
+    //   set output
+    core.setOutput('value', execOutput.stdout)
+  } catch (err) {
+    core.setFailed(err.message)
   }
+}
+
+const bashScript = ({ owner, repo, pr, outType }) => {
+  return `
+echo "github api query commits of current pr"
+gh api graphql -F query='@whatchanges.graphql' \\
+-F owner='${owner}' \\
+-F repo='${repo}' \\
+-F pr=${pr} \\
+--paginate \\
+--jq '.data.repository.pullRequest.commits.nodes | map(.commit) | map({oid, authoredDate, committedDate, messageBody, messageHeadline, authors: .authors.nodes | map({name, login: .user.login})})' > commits_draft.json
+
+echo "wrap commits_draft.json"
+jq -s 'flatten' commits_draft.json | jq '{ commits: .}' > commits.json
+
+echo "query changes then write to res.json"
+curl -H "Accept-Charset: UTF-8" \\
+--request POST \\
+--location 'https://go-mentoroid-api.geniam.com/gh/commits2md' \\
+--header 'Content-Type: application/json' \\
+--data '@commits.json' | jq .${outType} -r
+
+`
 }
 
 module.exports = {
