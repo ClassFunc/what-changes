@@ -15,10 +15,10 @@ on:
       - "release/*" # or whatever branch you want to check
 steps:
   - uses: actions/checkout@v4
-  - uses: classfunc/what-changes@v1
+  - uses: ClassFunc/what-changes@v1
     id: 'changes-table'
     with:
-      output-type: 'md'
+      output-type: 'md' # or 'html' or 'rows'
   - name: Print Output
     run: echo "${{ steps.changes-table.outputs.value }}"
 ```
