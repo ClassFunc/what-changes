@@ -26,6 +26,6 @@ jq -s 'flatten' | jq '{ commits: .}' | \
 curl -H "Accept-Charset: UTF-8" \
 --silent \
 --request POST \
---location 'https://go-mentoroid-api.geniam.com/gh/commits2md' \
+--location 'https://goapi.classfunc.com/github/whatchanges' \
 --header 'Content-Type: application/json' \
 --data '@-' | jq ."$outType" -r
