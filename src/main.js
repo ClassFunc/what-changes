@@ -35,6 +35,7 @@ async function run() {
       input: bash,
       silent: true
     })
+    console.log('--->output:', execOutput.stdout)
     console.log('--->err:', execOutput.stderr)
     //   set output
     core.setOutput('value', execOutput.stdout)
