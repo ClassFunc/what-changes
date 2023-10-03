@@ -3983,12 +3983,13 @@ async function run() {
 
     console.log(`extracting pr changes for ${owner}/${repo}#${pr}`)
     console.log(`output type: ${outType}`)
-    const bash = bashScript({ owner, repo, pr, outType })
-      console.log('bash script: ', bash)
+
       const whichGH = await getExecOutput('which', ['gh'])
       console.log('gh cmd in path: ', whichGH.stdout)
 
-    const execOutput = await getExecOutput(bash)
+      const bash = bashScript({ owner, repo, pr, outType })
+      console.log('bash script: ', bash)
+      const execOutput = await getExecOutput(whichGH.stdout, [bash])
     console.log(execOutput.stdout)
     //   set output
     core.setOutput('value', execOutput.stdout)
@@ -4033,7 +4034,7 @@ async function run() {
 
 const bashScript = ({ owner, repo, pr, outType }) => {
   return `
-gh api graphql \
+api graphql \
 -f query='${query}' \
 -F owner='${owner}' \
 -F repo='${repo}' \
