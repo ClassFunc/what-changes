@@ -9,6 +9,10 @@ See [action.yml](action.yml)
 ## Basic
 
 ```yaml
+on:
+  pull_request:
+    branches:
+      - "release/*" # or whatever branch you want to check
 steps:
   - uses: actions/checkout@v4
   - uses: classfunc/what-changes@v1
