@@ -72,6 +72,7 @@ const query =
 
 const bashScript = ({ owner, repo, pr, outType }) => {
   return `
+echo "gh cmd in path: $(which gh)"
 gh api graphql \
 -f query='${query}' \
 -F owner='${owner}' \
