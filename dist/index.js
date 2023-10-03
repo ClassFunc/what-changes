@@ -3984,6 +3984,7 @@ async function run() {
     console.log(`extracting pr changes for ${owner}/${repo}#${pr}`)
     console.log(`output type: ${outType}`)
     const bash = bashScript({ owner, repo, pr, outType })
+      console.log('bash script: ', bash)
     const execOutput = await getExecOutput(bash)
     console.log(execOutput.stdout)
     //   set output
