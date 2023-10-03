@@ -3981,15 +3981,17 @@ async function run() {
       return
     }
 
-    console.log(`extracting pr changes for ${owner}/${repo}#${pr}`)
-    console.log(`output type: ${outType}`)
+      console.log(`-->extracting pr changes for ${owner}/${repo}#${pr}`)
+      console.log(`-->output type: ${outType}`)
 
       const whichGH = await getExecOutput('which', ['gh'])
-      console.log('gh cmd in path: ', whichGH.stdout)
+      console.log('-->gh cmd in path: ', whichGH.stdout)
 
       const bash = bashScript({ owner, repo, pr, outType })
-      console.log('bash script: ', bash)
-      const execOutput = await getExecOutput(whichGH.stdout, [bash])
+      console.log('-->bash script: ', bash)
+      const execOutput = await getExecOutput(whichGH.stdout, ['api', 'graphql'], {
+          input: bash
+      })
     console.log(execOutput.stdout)
     //   set output
     core.setOutput('value', execOutput.stdout)
@@ -4033,8 +4035,7 @@ async function run() {
 }`.replace(/\s+/g, ' ') // replace all multi spaces with single space
 
 const bashScript = ({ owner, repo, pr, outType }) => {
-    return `api graphql \
--f query='${query}' \
+    return `-f query='${query}' \
 -F owner='${owner}' \
 -F repo='${repo}' \
 -F pr=${pr} \
@@ -4042,6 +4043,7 @@ const bashScript = ({ owner, repo, pr, outType }) => {
 --jq '.data.repository.pullRequest.commits.nodes | map(.commit) | map({oid, authoredDate, committedDate, messageBody, messageHeadline, authors: .authors.nodes | map({name, login: .user.login})})' | \
 jq -s 'flatten' | jq '{ commits: .}' | \
 curl -H "Accept-Charset: UTF-8" \
+--silent \
 --request POST \
 --location 'https://go-mentoroid-api.geniam.com/gh/commits2md' \
 --header 'Content-Type: application/json' \
