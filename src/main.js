@@ -16,7 +16,7 @@ async function run() {
     const owner = core.getInput('owner')
     const repo = core.getInput('repo')
     const pr = core.getInput('pr')
-    const outType = core.getInput('output-type')
+    const outType = core.getInput('output-type') || 'md'
 
     // check outType
     if (!ValidOutputTypes.includes(outType)) {
@@ -48,7 +48,6 @@ async function run() {
 
 const fetchCommitsSh = ({ owner, repo, pr }) =>
   `GH_CMD=$(which gh)
-# request all commits for a PR
 $GH_CMD api graphql \\
 -f query="${query}" \\
 -F owner="${owner}" \\
@@ -56,9 +55,8 @@ $GH_CMD api graphql \\
 -F pr="${pr}" \\
 --paginate \\
 --jq '.data.repository.pullRequest.commits.nodes | map(.commit) | map({oid, authoredDate, committedDate, messageBody, messageHeadline, authors: .authors.nodes | map({name, login: .user.login})})' | \\
-
-# format json
-jq -s 'flatten' | jq '{ commits: .}' -r
+jq -s 'flatten' | \\
+jq '{ commits: .}' -r
 `
 
 module.exports = {
