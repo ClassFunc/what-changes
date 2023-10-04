@@ -3,7 +3,6 @@ const { extract } = require('./extract')
 
 const shell = require('shelljs')
 const { query } = require('./query_ql')
-shell.config.silent = true
 
 /**
  * The main function for the action.
