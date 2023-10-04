@@ -68,7 +68,8 @@
     "@actions/core": "^1.10.1",
     "@actions/exec": "^1.1.1",
     "markdown-it": "^13.0.2",
-    "markdown-it-multimd-table": "^4.2.3"
+    "markdown-it-multimd-table": "^4.2.3",
+    "shelljs": "^0.8.5"
   },
   "devDependencies": {
     "@babel/core": "^7.23.0",
