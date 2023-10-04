@@ -3,19 +3,19 @@ const markdownItTable = require('markdown-it-multimd-table')
 const md = new MarkdownIt().use(markdownItTable)
 
 function extract(data, outputType) {
-  let rows = []
+  const rows = []
   let numOfMergedPR = 0
   let numOfHotfix = 0
   let idx = 0
-
-  data.commits.forEach(commit => {
-    let isMergePRCommit = commit.messageHeadline.includes('Merge pull request')
+  for (const commit of data.commits) {
+    const isMergePRCommit =
+      commit.messageHeadline.includes('Merge pull request')
     if (isMergePRCommit) {
-      let prNumber = commit.messageHeadline.split(' ')[3]
+      const prNumber = commit.messageHeadline.split(' ')[3]
       idx++
       numOfMergedPR++
 
-      let authorLogins = getAuthors(commit.authors)
+      const authorLogins = getAuthors(commit.authors)
       rows.push([
         idx.toString(),
         prNumber,
@@ -27,15 +27,15 @@ function extract(data, outputType) {
       ])
     }
 
-    let isHotfixCommit = replaceAllNoneAlphanumeric(
+    const isHotfixCommit = replaceAllNoneAlphanumeric(
       commit.messageHeadline.toLowerCase()
     ).includes('hotfix')
     if (!isMergePRCommit && isHotfixCommit) {
-      let prNumber = `[hotfix]<br/>${commit.oid}`
+      const prNumber = `[hotfix]<br/>${commit.oid}`
       idx++
       numOfHotfix++
 
-      let authorLogins = getAuthors(commit.authors)
+      const authorLogins = getAuthors(commit.authors)
       rows.push([
         idx.toString(),
         prNumber,
@@ -44,13 +44,13 @@ function extract(data, outputType) {
         commit.authoredDate
       ])
     }
-  })
+  }
 
-  let MD =
-    `| No. | PR | Title | By | Date |\n|-----|----|-------|----|------|\n` +
-    rows.map(row => `| ${row.join(' | ')} |`).join('\n')
+  const MD = `| No. | PR | Title | By | Date |\n|-----|----|-------|----|------|\n${rows
+    .map(row => `| ${row.join(' | ')} |`)
+    .join('\n')}`
 
-  let HTML = md.render(MD).replace(/\n/g, '')
+  const HTML = md.render(MD).replace(/\n/g, '')
 
   switch (outputType) {
     case 'markdown':
@@ -63,9 +63,9 @@ function extract(data, outputType) {
       return rows
     default:
       return {
-        rows: rows,
-        numOfMergedPR: numOfMergedPR,
-        numOfHotfix: numOfHotfix,
+        rows,
+        numOfMergedPR,
+        numOfHotfix,
         md: MD,
         html: HTML
       }
