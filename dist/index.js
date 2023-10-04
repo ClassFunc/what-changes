@@ -3985,7 +3985,7 @@ async function run() {
       core.info(`--> output type: ${outType}`)
 
       const execOutput = await getExecOutput(
-        'dist/bash.sh',
+        'dist/query_commits.sh',
         ['-q', query, '-o', owner, '-r', repo, '-p', pr, '-t', outType],
         {
             silent: true

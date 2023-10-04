@@ -1,12 +1,13 @@
 const core = require('@actions/core')
 const { getExecOutput } = require('@actions/exec')
+const { extract } = require('./extract')
 
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 
-const ValidOutputTypes = ['md', 'html', 'rows']
+const ValidOutputTypes = ['md', 'markdown', 'html', 'rows', 'json']
 
 async function run() {
   try {
@@ -26,22 +27,23 @@ async function run() {
     core.info(`--> extracting pr changes for ${owner}/${repo}#${pr}`)
     core.info(`--> output type: ${outType}`)
 
-    const execOutput = await getExecOutput(
-      'dist/bash.sh',
-      ['-q', query, '-o', owner, '-r', repo, '-p', pr, '-t', outType],
+    const commitsOutput = await getExecOutput(
+      'src/query_commits.sh',
+      ['-q', query, '-o', owner, '-r', repo, '-p', pr],
       {
         silent: true
       }
     )
-    if (execOutput.stdout && !execOutput.stderr) {
-      core.info('---> output ↓↓↓↓↓')
-      core.info(execOutput.stdout)
-      core.setOutput('value', execOutput.stdout)
-      core.info('---> set `outputs.value` ↑↑↑↑↑')
+
+    if (commitsOutput.stdout && !commitsOutput.stderr) {
+      const extracted = extract(JSON.parse(commitsOutput.stdout), outType)
+      core.setOutput('value', extracted)
+      core.info('outputs.value set to:')
+      core.info(extracted)
     }
-    if (execOutput.stderr) {
+    if (commitsOutput.stderr) {
       core.error('---> error: ↓↓↓↓↓')
-      core.error(execOutput.stderr)
+      core.error(commitsOutput.stderr)
     }
   } catch (err) {
     core.setFailed(err.message)
