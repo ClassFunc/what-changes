@@ -1,6 +1,6 @@
-# what-changes
+# what-changes actions
 
-This action checks for changes of between 2 prs based on Merge Pull Request commit, and returns formatted output
+This action checks for changes of between 2 prs, based on Merge Pull Request commit, and returns formatted output
 
 # Usage
 
@@ -15,10 +15,10 @@ on:
       - "release/*" # or whatever branch you want to check
 steps:
   - uses: actions/checkout@v4
-  - uses: ClassFunc/what-changes@v1
+  - uses: ClassFunc/what-changes@v2
     id: 'changes-table'
     with:
-      output-type: 'md' # or 'html' or 'rows'
+      output-type: 'md' # or 'html' or 'rows', default is 'md'
   - name: Print Output
     run: echo "${{ steps.changes-table.outputs.value }}"
 ```

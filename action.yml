@@ -19,7 +19,7 @@ inputs:
   output-type:
     description: "output type"
     required: false
-    default: 'html'
+    default: 'md'
 
 # Define your outputs here.
 outputs:
