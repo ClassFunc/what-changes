@@ -19527,7 +19527,6 @@ exports["default"] = _default;
 
             const shell = __nccwpck_require__(3516)
             const { query } = __nccwpck_require__(943)
-            shell.config.silent = true
 
 /**
  * The main function for the action.
@@ -19541,7 +19540,7 @@ async function run() {
     const owner = core.getInput('owner')
     const repo = core.getInput('repo')
     const pr = core.getInput('pr')
-    const outType = core.getInput('output-type')
+      const outType = core.getInput('output-type') || 'md'
 
     // check outType
     if (!ValidOutputTypes.includes(outType)) {
@@ -19554,9 +19553,7 @@ async function run() {
       core.info(`--> extracting pr changes for ${owner}/${repo}#${pr}`)
       core.info(`--> output type: ${outType}`)
 
-      const commitsOutput = shell.exec(fetchCommitsSh({ owner, repo, pr }), {
-          silent: true
-      }).stdout
+      const commitsOutput = shell.exec(fetchCommitsSh({ owner, repo, pr }))
 
       if (commitsOutput.stdout && !commitsOutput.stderr) {
           const extracted = extract(JSON.parse(commitsOutput.stdout), outType)
@@ -19575,7 +19572,6 @@ async function run() {
 
             const fetchCommitsSh = ({ owner, repo, pr }) =>
               `GH_CMD=$(which gh)
-# request all commits for a PR
 $GH_CMD api graphql \\
 -f query="${query}" \\
 -F owner="${owner}" \\
@@ -19583,9 +19579,8 @@ $GH_CMD api graphql \\
 -F pr="${pr}" \\
 --paginate \\
 --jq '.data.repository.pullRequest.commits.nodes | map(.commit) | map({oid, authoredDate, committedDate, messageBody, messageHeadline, authors: .authors.nodes | map({name, login: .user.login})})' | \\
-
-# format json
-jq -s 'flatten' | jq '{ commits: .}' -r
+jq -s 'flatten' | \\
+jq '{ commits: .}' -r
 `
 
             module.exports = {
@@ -19758,7 +19753,7 @@ module.exports = require("util");
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
-/******/
+    /******/
 /******/ 	// The require function
 /******/ 	function __nccwpck_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -19772,7 +19767,7 @@ module.exports = require("util");
             /******/      loaded: false,
 /******/ 			exports: {}
 /******/ 		};
-/******/
+        /******/
 /******/ 		// Execute the module function
 /******/ 		var threw = true;
 /******/ 		try {
@@ -19785,11 +19780,12 @@ module.exports = require("util");
         /******/ 		// Flag the module as loaded
         /******/
         module.loaded = true;
-/******/
+        /******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/
+
+    /******/
 /************************************************************************/
     /******/ 	/* webpack/runtime/node module decorator */
     /******/
