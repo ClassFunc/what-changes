@@ -30,9 +30,7 @@ async function run() {
     core.info(`--> extracting pr changes for ${owner}/${repo}#${pr}`)
     core.info(`--> output type: ${outType}`)
 
-    const commitsOutput = shell.exec(fetchCommitsSh({ owner, repo, pr }), {
-      silent: true
-    }).stdout
+    const commitsOutput = shell.exec(fetchCommitsSh({ owner, repo, pr })).stdout
 
     if (commitsOutput.stdout && !commitsOutput.stderr) {
       const extracted = extract(JSON.parse(commitsOutput.stdout), outType)
