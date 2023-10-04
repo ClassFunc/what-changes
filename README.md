@@ -15,7 +15,7 @@ on:
       - "release/*" # or whatever branch you want to check
 steps:
   - uses: actions/checkout@v4
-  - uses: ClassFunc/what-changes@v2.1
+  - uses: ClassFunc/what-changes@v2.2
     id: 'changes-table'
     with:
       output-type: 'md' # or 'html' or 'rows', default is 'md'
