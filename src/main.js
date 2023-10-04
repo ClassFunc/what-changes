@@ -53,10 +53,10 @@ async function run() {
 const fetchCommitsSh = ({ owner, repo, pr }) =>
   `GH_CMD=$(which gh)
 $GH_CMD api graphql \\
--f query=${query} \\
--F owner="${owner}" \\
--F repo="${repo}" \\
--F pr="${pr}" \\
+-f query='${query}' \\
+-F owner='${owner}' \\
+-F repo='${repo}' \\
+-F pr='${pr}' \\
 --paginate \\
 --jq '.data.repository.pullRequest.commits.nodes | map(.commit) | map({oid, authoredDate, committedDate, messageBody, messageHeadline, authors: .authors.nodes | map({name, login: .user.login})})' | \\
 jq -s 'flatten' | \\
