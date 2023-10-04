@@ -34,5 +34,5 @@ function queryFn() {
 }
 
 module.exports = {
-  query: queryFn()
+  query: JSON.stringify(queryFn())
 }
