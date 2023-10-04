@@ -30,7 +30,7 @@ async function run() {
     core.info(`--> output type: ${outType}`)
 
     const fetchSh = fetchCommitsSh({ owner, repo, pr })
-    console.log(fetchSh)
+
     const commitsOutput = shell.exec(fetchSh, {
       async: false
     })
@@ -38,8 +38,6 @@ async function run() {
     if (commitsOutput.stdout && !commitsOutput.stderr) {
       const extracted = extract(JSON.parse(commitsOutput.stdout), outType)
       core.setOutput('value', extracted)
-      core.info('outputs.value set to:')
-      core.info(extracted)
     }
     if (commitsOutput.stderr) {
       core.error('---> error: ↓↓↓↓↓')
