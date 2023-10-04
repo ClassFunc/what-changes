@@ -1,6 +1,9 @@
 const core = require('@actions/core')
-const { getExecOutput } = require('@actions/exec')
 const { extract } = require('./extract')
+
+const shell = require('shelljs')
+const { query } = require('./query_ql')
+shell.config.silent = true
 
 /**
  * The main function for the action.
@@ -27,13 +30,9 @@ async function run() {
     core.info(`--> extracting pr changes for ${owner}/${repo}#${pr}`)
     core.info(`--> output type: ${outType}`)
 
-    const commitsOutput = await getExecOutput(
-      'src/query_commits.sh',
-      ['-q', query, '-o', owner, '-r', repo, '-p', pr],
-      {
-        silent: true
-      }
-    )
+    const commitsOutput = shell.exec(fetchCommitsSh({ owner, repo, pr }), {
+      silent: true
+    }).stdout
 
     if (commitsOutput.stdout && !commitsOutput.stderr) {
       const extracted = extract(JSON.parse(commitsOutput.stdout), outType)
@@ -50,39 +49,20 @@ async function run() {
   }
 }
 
-const query =
-  `query ($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
-    repository(owner: $owner, name: $repo) {
-        pullRequest(number: $pr) {
-            commits(first: 100, after: $endCursor) {
-                totalCount
-                pageInfo {
-                    startCursor
-                    endCursor
-                    hasNextPage
-                    hasPreviousPage
-                }
-                nodes {
-                    commit {
-                        authoredDate
-                        authors(last: 2) {
-                            nodes {
-                                name
-                                user {
-                                    login
-                                }
-                            }
-                        }
-                        committedDate
-                        messageBody
-                        messageHeadline
-                        oid
-                    }
-                }
-            }
-        }
-    }
-}`.replace(/\s+/g, ' ') // replace all multi spaces with single space
+const fetchCommitsSh = ({ owner, repo, pr }) =>
+  `GH_CMD=$(which gh)
+# request all commits for a PR
+$GH_CMD api graphql \\
+-f query="${query}" \\
+-F owner="${owner}" \\
+-F repo="${repo}" \\
+-F pr="${pr}" \\
+--paginate \\
+--jq '.data.repository.pullRequest.commits.nodes | map(.commit) | map({oid, authoredDate, committedDate, messageBody, messageHeadline, authors: .authors.nodes | map({name, login: .user.login})})' | \\
+
+# format json
+jq -s 'flatten' | jq '{ commits: .}' -r
+`
 
 module.exports = {
   run
