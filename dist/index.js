@@ -18882,7 +18882,9 @@ async function run() {
     core.info(`--> extracting pr changes for ${owner}/${repo}#${pr}`)
     core.info(`--> output type: ${outType}`)
 
-    const commitsOutput = shell.exec(fetchCommitsSh({ owner, repo, pr }), {
+    const fetchSh = fetchCommitsSh({ owner, repo, pr })
+    console.log(fetchSh)
+    const commitsOutput = shell.exec(fetchSh, {
       async: false
     })
 
@@ -18904,7 +18906,7 @@ async function run() {
 const fetchCommitsSh = ({ owner, repo, pr }) =>
   `GH_CMD=$(which gh)
 $GH_CMD api graphql \\
--f query="${query}" \\
+-f query=${query} \\
 -F owner="${owner}" \\
 -F repo="${repo}" \\
 -F pr="${pr}" \\
