@@ -99,7 +99,7 @@ function replaceAllNoneAlphanumeric(str) {
 }
 
 function getAuthors(authors) {
-  return authors.map(author => author.login).join(', ')
+  return authors.map(author => `@${author.login}`).join(', ')
 }
 
 function removeAllLinesStartsWith(str, withStr = '...') {
