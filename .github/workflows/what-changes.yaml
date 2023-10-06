@@ -23,9 +23,9 @@ jobs:
         with:
           message-id: 'whatchanges'
           message: |
-            echo ${{ github.event.pull_request.title }}
+            ${{ github.event.pull_request.title }} What Changes:
             
-            echo '${{ steps.changes-table.outputs.total }} Total; ${{ steps.changes-table.outputs.numOfMerged }} Merged; ${{ steps.changes-table.outputs.numOfHotfix }} Hotfix'
+            ${{ steps.changes-table.outputs.total }} Total; ${{ steps.changes-table.outputs.numOfMerged }} Merged; ${{ steps.changes-table.outputs.numOfHotfix }} Hotfix
             
             ${{ steps.changes-table.outputs.value }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
