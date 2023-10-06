@@ -2,6 +2,13 @@ const MarkdownIt = require('markdown-it')
 const markdownItTable = require('markdown-it-multimd-table')
 const md = new MarkdownIt().use(markdownItTable)
 
+/**
+ * Extracts the PR changes from the GraphQL response.
+ * @param data
+ * @param outputType
+ * @returns {{total: number, numOfMergedPR: number, numOfHotfix: number, value: string}|{total: number, numOfMergedPR: number, numOfHotfix: number, value: *}|{total: number, numOfMergedPR: number, numOfHotfix: number, value: *[]}|{total: number, numOfMergedPR: number, numOfHotfix: number, value: {md: string, html: *, rows: *[]}}}
+ */
+
 function extract(data, outputType) {
   const rows = []
   let numOfMergedPR = 0
@@ -52,22 +59,37 @@ function extract(data, outputType) {
 
   const HTML = md.render(MD).replace(/\n/g, '')
 
+  const res = {
+    numOfMergedPR,
+    numOfHotfix,
+    total: rows.length
+  }
   switch (outputType) {
     case 'markdown':
     case 'md':
-      return MD
+      return {
+        ...res,
+        value: MD
+      }
     case 'html':
-      return HTML
+      return {
+        ...res,
+        value: HTML
+      }
     case 'json':
     case 'rows':
-      return rows
+      return {
+        ...res,
+        value: rows
+      }
     default:
       return {
-        rows,
-        numOfMergedPR,
-        numOfHotfix,
-        md: MD,
-        html: HTML
+        ...res,
+        value: {
+          rows,
+          md: MD,
+          html: HTML
+        }
       }
   }
 }

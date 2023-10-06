@@ -1,0 +1,27 @@
+name: What Changes
+
+on:
+  pull_request:
+    branches:
+      - releases/*
+      - main
+
+env:
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  show-changes:
+    name: Show Changes
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Query changes
+        uses: 'ClassFunc/what-changes@v2.2'
+        id: changes-table
+
+      - uses: mshick/add-pr-comment@v2
+        with:
+          message-id: 'whatchanges'
+          message: |
+            ${{ steps.changes-table.outputs.value }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}

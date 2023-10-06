@@ -25,6 +25,12 @@ inputs:
 outputs:
   value:
     description: 'value of var `output-type` field'
+  total:
+    description: 'total number of changes'
+  numOfMerged:
+    description: 'number of merged pull requests'
+  numOfHotfix:
+    description: 'number of hotfix commits'
 
 runs:
   using: node20

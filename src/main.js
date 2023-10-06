@@ -37,7 +37,10 @@ async function run() {
 
     if (commitsOutput.stdout && !commitsOutput.stderr) {
       const extracted = extract(JSON.parse(commitsOutput.stdout), outType)
-      core.setOutput('value', extracted)
+      core.setOutput('value', extracted.value)
+      core.setOutput('total', extracted.total)
+      core.setOutput('numOfMerged', extracted.numOfMergedPR)
+      core.setOutput('numOfHotfix', extracted.numOfHotfix)
     }
     if (commitsOutput.stderr) {
       core.error('---> error: ↓↓↓↓↓')
