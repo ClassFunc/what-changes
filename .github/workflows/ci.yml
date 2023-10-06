@@ -57,4 +57,10 @@ jobs:
 
       - name: Print Output
         id: output
-        run: echo "${{ steps.test-action.outputs.value }}"
+        run: |
+          
+          echo "Total: ${{ steps.test-action.outputs.total }}"
+          echo "${{ steps.test-action.outputs.numOfMerged }} Merged"
+          echo "${{ steps.test-action.outputs.numOfHotfix }} Hotfix"
+          echo "Details: \n\n"
+          echo "${{ steps.test-action.outputs.value }}"
