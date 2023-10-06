@@ -16,12 +16,16 @@ jobs:
     steps:
 
       - name: Query changes
-        uses: 'ClassFunc/what-changes@v2.2'
+        uses: 'ClassFunc/what-changes@v3'
         id: changes-table
 
       - uses: mshick/add-pr-comment@v2
         with:
           message-id: 'whatchanges'
           message: |
+            ${{ github.event.pull_request.title }} What Changes:
+            
+            ${{ steps.changes-table.outputs.total }} Total; ${{ steps.changes-table.outputs.numOfMerged }} Merged; ${{ steps.changes-table.outputs.numOfHotfix }} Hotfix
+            
             ${{ steps.changes-table.outputs.value }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
