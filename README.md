@@ -1,6 +1,6 @@
 # what-changes actions
 
-This action checks for changes of between 2 prs, based on Merge Pull Request commit, and returns formatted output
+This action checks for changes between branches (PR), based on Merge Pull Request commit, and returns formatted output
 
 # Usage
 
@@ -33,7 +33,7 @@ steps:
 
 v3.1:
 
-- Add `@` before logins for mention github users
+- Add `@` before logins for mention PR closed by authors
 
 v3.0:
 
