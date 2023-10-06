@@ -27,7 +27,12 @@ function extract(data, outputType) {
         idx.toString(),
         prNumber,
         removeAllFirstEmptyLines(
-          removeAllLinesStartsWith(commit.messageBody, '…')
+          removeAllLinesStartsWith(
+            outputType === 'markdown' || outputType === 'md'
+              ? skipAllPipeInTitleForMDWriter(commit.messageBody)
+              : commit.messageBody,
+            '…'
+          )
         ).replace(/\n/g, '<br/>'),
         authorLogins,
         commit.authoredDate
@@ -114,6 +119,10 @@ function removeAllFirstEmptyLines(str) {
     .split('\n')
     .filter(line => line.trim() !== '')
     .join('\n')
+}
+
+function skipAllPipeInTitleForMDWriter(str) {
+  return str.replace(/\|/g, '\\|')
 }
 
 module.exports = {
