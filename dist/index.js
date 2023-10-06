@@ -18749,6 +18749,13 @@ const MarkdownIt = __nccwpck_require__(8561)
 const markdownItTable = __nccwpck_require__(5552)
 const md = new MarkdownIt().use(markdownItTable)
 
+/**
+ * Extracts the PR changes from the GraphQL response.
+ * @param data
+ * @param outputType
+ * @returns {{total: number, numOfMergedPR: number, numOfHotfix: number, value: string}|{total: number, numOfMergedPR: number, numOfHotfix: number, value: *}|{total: number, numOfMergedPR: number, numOfHotfix: number, value: *[]}|{total: number, numOfMergedPR: number, numOfHotfix: number, value: {md: string, html: *, rows: *[]}}}
+ */
+
 function extract(data, outputType) {
   const rows = []
   let numOfMergedPR = 0
@@ -18799,22 +18806,37 @@ function extract(data, outputType) {
 
   const HTML = md.render(MD).replace(/\n/g, '')
 
+  const res = {
+    numOfMergedPR,
+    numOfHotfix,
+    total: rows.length
+  }
   switch (outputType) {
     case 'markdown':
     case 'md':
-      return MD
+      return {
+        ...res,
+        value: MD
+      }
     case 'html':
-      return HTML
+      return {
+        ...res,
+        value: HTML
+      }
     case 'json':
     case 'rows':
-      return rows
+      return {
+        ...res,
+        value: rows
+      }
     default:
       return {
-        rows,
-        numOfMergedPR,
-        numOfHotfix,
-        md: MD,
-        html: HTML
+        ...res,
+        value: {
+          rows,
+          md: MD,
+          html: HTML
+        }
       }
   }
 }
@@ -18890,7 +18912,10 @@ async function run() {
 
     if (commitsOutput.stdout && !commitsOutput.stderr) {
       const extracted = extract(JSON.parse(commitsOutput.stdout), outType)
-      core.setOutput('value', extracted)
+      core.setOutput('value', extracted.value)
+      core.setOutput('total', extracted.total)
+      core.setOutput('numOfMerged', extracted.numOfMergedPR)
+      core.setOutput('numOfHotfix', extracted.numOfHotfix)
     }
     if (commitsOutput.stderr) {
       core.error('---> error: ↓↓↓↓↓')
