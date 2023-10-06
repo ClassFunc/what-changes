@@ -14,13 +14,19 @@ on:
     branches:
       - "release/*" # or whatever branch you want to check
 steps:
-  - uses: actions/checkout@v4
-  - uses: ClassFunc/what-changes@v2.2
-    id: 'changes-table'
-    with:
-      output-type: 'md' # or 'html' or 'rows', default is 'md'
-  - name: Print Output
-    run: echo "${{ steps.changes-table.outputs.value }}"
+    - uses: actions/checkout@v4
+    - uses: ClassFunc/what-changes@v3
+      id: 'changes-table'
+      with:
+        output-type: 'md' # or 'html' or 'rows','json', default: 'md'
+    - name: Print Output
+      id: output
+      run: |
+        echo "Total: ${{ steps.changes-table.outputs.total }}"
+        echo "${{ steps.changes-table.outputs.numOfMerged }} Merged"
+        echo "${{ steps.changes-table.outputs.numOfHotfix }} Hotfix"
+        echo "Details: \n\n"
+        echo "${{ steps.changes-table.outputs.value }}"
 ```
 
 # License
