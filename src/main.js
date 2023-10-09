@@ -36,11 +36,22 @@ async function run() {
     })
 
     if (commitsOutput.stdout && !commitsOutput.stderr) {
-      const extracted = extract(JSON.parse(commitsOutput.stdout), outType)
-      core.setOutput('value', extracted.value)
-      core.setOutput('total', extracted.total)
-      core.setOutput('numOfMerged', extracted.numOfMergedPR)
-      core.setOutput('numOfHotfix', extracted.numOfHotfix)
+      const { value, total, numOfMergedPR, numOfHotfix } = extract(
+        JSON.parse(commitsOutput.stdout),
+        outType
+      )
+      // set output summary
+      // get github.event.pull_request.title
+      const prTitle = core.getInput('pr-title')
+
+      core.setOutput('value', value)
+      core.setOutput('total', total)
+      core.setOutput('numOfMerged', numOfMergedPR)
+      core.setOutput('numOfHotfix', numOfHotfix)
+      core.setOutput(
+        'summary',
+        `${prTitle} - What Changes:\n${total} Total; ${numOfMergedPR} Merged; ${numOfHotfix} Hotfix`
+      )
     }
     if (commitsOutput.stderr) {
       core.error('---> error: ↓↓↓↓↓')
