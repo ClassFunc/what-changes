@@ -59,7 +59,7 @@ jobs:
         with:
           message-id: 'whatchanges'
           message: |
-            echo "This is result of test actions"
-            echo "${{ steps.test-action.outputs.summary }}"
-            echo "${{ steps.test-action.outputs.value }}"
+            ___This is result of test actions___
+            ___${{ steps.test-action.outputs.summary }}___
+            ${{ steps.test-action.outputs.value }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
