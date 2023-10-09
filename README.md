@@ -12,24 +12,28 @@ See [action.yml](action.yml)
 on:
   pull_request:
     branches:
-      - "release/*" # or whatever branch you want to check
+      - "releases/*" # or whatever branch you want to check
 steps:
   - uses: actions/checkout@v4
-  - uses: ClassFunc/what-changes@v3.1
+  - uses: ClassFunc/what-changes@v3.2
     id: 'changes-table'
     with:
       output-type: 'md' # or 'html' or 'rows','json', default: 'md'
   - name: Print Output
     id: output
-    run: |
+    run: |-
+      echo "Summary: ${{ steps.changes-table.outputs.summary }}"
       echo "Total: ${{ steps.changes-table.outputs.total }}"
       echo "${{ steps.changes-table.outputs.numOfMerged }} Merged"
       echo "${{ steps.changes-table.outputs.numOfHotfix }} Hotfix"
-      echo "Details: \n\n"
       echo "${{ steps.changes-table.outputs.value }}"
 ```
 
 ## Change Log
+
+v3.2:
+
+- Add `summary` output for short summary of changes
 
 v3.1:
 
