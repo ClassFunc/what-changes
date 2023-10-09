@@ -55,12 +55,11 @@ jobs:
         with:
           output-type: 'md'
 
-      - name: Print Output
-        id: output
-        run: |
-          
-          echo "Total: ${{ steps.test-action.outputs.total }}"
-          echo "${{ steps.test-action.outputs.numOfMerged }} Merged"
-          echo "${{ steps.test-action.outputs.numOfHotfix }} Hotfix"
-          echo "Details: \n\n"
-          echo "${{ steps.test-action.outputs.value }}"
+      - uses: mshick/add-pr-comment@v2
+        with:
+          message-id: 'whatchanges'
+          message: |
+            ___This is result of test actions___
+            ___${{ steps.test-action.outputs.summary }}___
+            ${{ steps.test-action.outputs.value }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
