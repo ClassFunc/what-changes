@@ -1,3 +1,5 @@
+const { handleError } = require('./utils')
+
 const core = require('@actions/core')
 const { extract } = require('./extract')
 
@@ -58,7 +60,7 @@ async function run() {
       core.error(commitsOutput.stderr)
     }
   } catch (err) {
-    core.setFailed(err.message)
+    handleError(err.message)
   }
 }
 
