@@ -62,7 +62,7 @@
     ]
   },
   "dependencies": {
-    "@actions/core": "^2.0.3",
+    "@actions/core": "^3.0.1",
     "@actions/exec": "^2.0.0",
     "markdown-it": "^14.3.0",
     "markdown-it-multimd-table": "^4.2.3",
