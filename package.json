@@ -79,6 +79,6 @@
     "eslint-plugin-jest": "^29.15.4",
     "jest": "^30.4.2",
     "make-coverage-badge": "^1.2.0",
-    "prettier": "^3.9.4"
+    "prettier": "^3.9.5"
   }
 }
